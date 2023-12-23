@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+   <!--  cripto js -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js" 
+   integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ==" crossorigin="anonymous" 
+   referrerpolicy="no-referrer"></script>
+</head>
+<body>
+    <input type="text" id="nameInp" placeholder="Fullname" > <br>
+    <input type="text" id="emailInp" placeholder="Email" ><br>
+    <input type="text" id="usernameInp" placeholder="User name" ><br>
+    <input type="text" id="passInp" placeholder="Password" > <br>
+    <button id="sub_btn"> Register</button>
+    
+    
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyB7U1xTTMVV1tMsVwGSRUCXUw7JuM6K1wo",
+          authDomain: "jsitester01.firebaseapp.com",
+          projectId: "jsitester01",
+          storageBucket: "jsitester01.appspot.com",
+          messagingSenderId: "335459876746",
+          appId: "1:335459876746:web:f9c6e72c9ea3b2a208d273",
+          measurementId: "G-CZKHSY8YR5"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+                import { getDatabase, ref, child, get, set} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        let db = getDatabase();
+        const analytics = getAnalytics(app);
+
+        let name =document.getElementById('nameInp')
+        let email =document.getElementById('emailInp')
+        let username = document.getElementById('usernameInp')
+        let pass =document.getElementById('passInp')
+        let submit = document.getElementById('sub_btn')
+        
+        function validationForm(){
+          
+          let nameRegex= /^[a-zA-Z]+$/
+          let emailRegex= /^[a-zA-Z0-9]+@(gmail).com$/
+
+          let userRegex= /^[a-zA-Z0-9]{4,}$/
+          if(name.value== ''||email.value==''||username.value==''){
+            alert("You have empty field");
+            return false;
+          }
+          if(!nameRegex.test(name.value)){
+            alert("The fullname should contain only alphabets");
+            return false;
+          }
+          if(!emailRegex.test(email.value)){
+            alert("This email has the wrong format");
+            return false;
+          }
+          if(!userRegex.test(username.value)){
+            alert("Username must contain alphabet characters, number and more than 4 characters");
+            return false;
+          }
+          return true;
+        }
+        function registerForm(){
+          if(!validationForm()){
+            return
+          }
+          alert("Success")
+          let dbRef = ref (db);
+          get(child(dbRef, "User/" + username.value )).then((result)=>{
+              if(result.exists()){
+                alert("Account already exist")
+              } else{
+                set(ref(db, "User/" + username.value), {
+                  fullname: name.value,
+                  email:email.value,
+                  username:username.value,
+                 /*  passwordFB: pass.value */
+                 passFB:encPass()
+                })
+                .then(()=>{alert("Account add success");
+              }).catch((error)=>{
+                  alert("Error" + error)
+                })
+              }
+          }) 
+        }
+        /* alert("success") */
+       /*  mã hóa mật khẩu */
+      function encPass(){
+        var encryptionPass = CryptoJS.AES.encrypt(pass.value, pass.value)
+        return encryptionPass.toString();
+
+       }
+        submit.addEventListener('click', registerForm)
+      </script>
+      
+</body>
+</html>

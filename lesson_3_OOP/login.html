@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js" integrity="sha512-a+SUDuwNzXDvz4XrIcXHuCf089/iJAoN4lmrXJg18XnduKK6YlDHNRalv4yd1N40OKI80tFidF+rqTFKGPoWFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+<!--     Khai báo biến
+    
+ -->    
+        
+ <input type="text" id="userInp" placeholder="User name" ><br>
+    <input type="text" id="passInp" placeholder="Password" > <br>
+    <button id="sub_btn"> Login</button> <br>
+    <a href="register.html"> Haven't has an account? <br >Register here</a>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyB7U1xTTMVV1tMsVwGSRUCXUw7JuM6K1wo",
+          authDomain: "jsitester01.firebaseapp.com",
+          projectId: "jsitester01",
+          storageBucket: "jsitester01.appspot.com",
+          messagingSenderId: "335459876746",
+          appId: "1:335459876746:web:f9c6e72c9ea3b2a208d273",
+          measurementId: "G-CZKHSY8YR5"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+                import { getDatabase, ref, child, get, set} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        let db = getDatabase();
+      /* Khai báo biến */
+
+      
+        var username = document.getElementById('userInp');
+        var pass =document.getElementById('passInp');
+        var submit = document.getElementById('sub_btn');
+        //xử lí đăng nhập
+        function authenUser(){
+            var dbRef = ref(db);
+            get(child(dbRef, "User/"+username.value))
+            .then((result)=>{
+                if(result.exists()) {
+                    
+                    let dbpass = decPass(result.val().passwordFB);
+                    if(dbpass == pass.value){
+                        login()
+                    }else{
+                        alert("password is incorrect")
+                    }
+                }else{
+                    alert("username is not correct")
+                }
+            })
+        }
+        //Giai ma pass
+        function decPass(firePass){
+            var encryptionPass = 
+                CryptoJS.AES.decrypt(firePass, pass.value);
+            return encryptionPass.toString(CryptoJS.enc.Utf8);
+        }
+        submit.addEventListener('click', authenUser)
+    </script>
+</body>
+</html>
